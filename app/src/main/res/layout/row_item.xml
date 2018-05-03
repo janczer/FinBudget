@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/row_item"
-    android:background="#ECEFF1"
-    android:padding="5dp">
+    android:background="#607D8B"
+    android:padding="5dp"
+    >
 
     <TextView
         android:id="@+id/first"
