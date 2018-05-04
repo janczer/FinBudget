@@ -12,4 +12,6 @@ class Category {
     constructor(name: String) {
         this.name = name
     }
+
+    override fun toString() = name
 }
