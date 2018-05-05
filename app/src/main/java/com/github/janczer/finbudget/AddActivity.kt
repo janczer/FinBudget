@@ -10,6 +10,7 @@ import android.widget.Toast
 import com.github.janczer.finbudget.db.AppDBHandler
 import kotlinx.android.synthetic.main.activity_add.*
 import com.github.janczer.finbudget.db.Item
+import java.math.BigDecimal
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -34,13 +35,9 @@ class AddActivity : AppCompatActivity() {
         }
 
         val categories = dbHandler.getAllCategories()
-        val amount = try { Integer.parseInt(editAmount.text.toString()) } catch (e: NumberFormatException) { null }
-        if (amount == null) {
-            showToast("Amount can't be more then ${Int.MAX_VALUE}")
-            return
-        }
+        val amount = BigDecimal(editAmount.text.toString())
 
-        if (amount < 0) {
+        if (amount < BigDecimal.ZERO) {
             showToast("Amount can't be negative")
             return
         }
@@ -48,7 +45,7 @@ class AddActivity : AppCompatActivity() {
 
         val item = Item(amount)
         item.idcategory = categories.filter { it.value.name == catName }.keys.first()
-        item.date = SimpleDateFormat.getDateInstance().format(Calendar.getInstance().time)
+        item.date = Calendar.getInstance().time.toStringFormatLocal()
         dbHandler.addItem(item)
 
         val main = Intent(this, MainActivity::class.java)
@@ -64,3 +61,5 @@ class AddActivity : AppCompatActivity() {
         toast.show()
     }
 }
+
+private fun Date.toStringFormatLocal() = SimpleDateFormat.getDateInstance().format(this)

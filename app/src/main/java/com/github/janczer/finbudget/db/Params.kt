@@ -1,7 +1,7 @@
 package com.github.janczer.finbudget.db
 
 object Params {
-    const val DATABASE_VERSION = 3
+    const val DATABASE_VERSION = 4
     const val DATABASE_NAME = "fin_budget.db"
     const val TABLE_ITEM = "item"
     const val TABLE_CATEGORY = "category"

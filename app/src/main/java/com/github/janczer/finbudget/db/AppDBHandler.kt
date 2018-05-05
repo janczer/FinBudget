@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
+import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -17,7 +18,7 @@ class AppDBHandler(context: Context, name: String?,
     override fun onCreate(db: SQLiteDatabase?) {
         val createTableItem = "CREATE TABLE ${Params.TABLE_ITEM} ( " +
                         "${Params.COLUMN_ID} INTEGER PRIMARY KEY," +
-                        "${Params.COLUMN_AMOUNT} INTEGER," +
+                        "${Params.COLUMN_AMOUNT} REAL," +
                         "${Params.COLUMN_IDCATEGORY} INTEGER," +
                         "${Params.COLUMN_DATE} TEXT," +
                         "FOREIGN KEY(${Params.COLUMN_IDCATEGORY}) REFERENCES ${Params.TABLE_CATEGORY}(${Params.COLUMN_ID}))"
@@ -51,7 +52,7 @@ class AppDBHandler(context: Context, name: String?,
 
     fun addItem(item: Item) {
         val values = ContentValues()
-        values.put(Params.COLUMN_AMOUNT, item.amount.toFloat())
+        values.put(Params.COLUMN_AMOUNT, item.amount.toDouble())
         values.put(Params.COLUMN_IDCATEGORY, item.idcategory)
         values.put(Params.COLUMN_DATE, item.date)
 
@@ -64,14 +65,9 @@ class AppDBHandler(context: Context, name: String?,
     fun getAllItems(): ArrayList<Item> {
         val items = ArrayList<Item>()
         val db = this.writableDatabase
-        var cursor: Cursor? = null
-        try {
-            cursor = db.rawQuery("SELECT * FROM ${Params.TABLE_ITEM} ORDER BY ${Params.COLUMN_DATE} DESC", null)
+        val cursor: Cursor = try {
+            db.rawQuery("SELECT * FROM ${Params.TABLE_ITEM} ORDER BY ${Params.COLUMN_DATE} DESC", null)
         } catch (e: SQLiteException) {
-            return ArrayList()
-        }
-
-        if (cursor == null) {
             return ArrayList()
         }
 
@@ -83,7 +79,7 @@ class AppDBHandler(context: Context, name: String?,
             items.add(
                     Item(
                             cursor.getInt(cursor.getColumnIndex(Params.COLUMN_ID)),
-                            cursor.getInt(cursor.getColumnIndex(Params.COLUMN_AMOUNT)),
+                            BigDecimal(cursor.getDouble(cursor.getColumnIndex(Params.COLUMN_AMOUNT))),
                             cursor.getInt(cursor.getColumnIndex(Params.COLUMN_IDCATEGORY)),
                             cursor.getString(cursor.getColumnIndex(Params.COLUMN_DATE))
                     )
@@ -97,14 +93,9 @@ class AppDBHandler(context: Context, name: String?,
 
     fun getAllCategories(): Map<Int, Category> {
         val db = this.writableDatabase
-        var cursor: Cursor? = null
-        try {
-            cursor = db.rawQuery("SELECT * FROM ${Params.TABLE_CATEGORY}", null)
+        val cursor: Cursor = try {
+            db.rawQuery("SELECT * FROM ${Params.TABLE_CATEGORY}", null)
         } catch (e: SQLiteException) {
-            return HashMap()
-        }
-
-        if (cursor == null) {
             return HashMap()
         }
 
